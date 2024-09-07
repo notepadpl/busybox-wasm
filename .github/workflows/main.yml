@@ -19,15 +19,15 @@ jobs:
         cd emsdk
         ./emsdk install latest
         ./emsdk activate latest
-        source ./emsdk_env.sh
+        source ./emsdk/emsdk_env.sh  # Poprawiono ścieżkę do aktywacji
 
     - name: Compile C to WebAssembly
       run: |
+        source ./emsdk/emsdk_env.sh  # Ponowna aktywacja przed kompilacją
         emcc hello.c -o hello.html
 
     - name: Upload WebAssembly files
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4
       with:
         name: wasm-files
         path: hello.*
-        
