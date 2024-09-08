@@ -1,11 +1,33 @@
-name: Build WebAssembly
-on: [push]
+name: Compile C to WebAssembly
+
+on:
+  push:
+    branches:
+      - main
+
 jobs:
   build:
     runs-on: ubuntu-latest
-    container:
-      image: my-emscripten-docker-image
+
     steps:
-      - uses: actions/checkout@v3
-      - name: Build with Emscripten
-        run: emcc hello.c -o hello.wasm
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Install Emscripten
+      run: |
+        git clone https://github.com/emscripten-core/emsdk.git
+        cd emsdk
+        ./emsdk install latest
+        ./emsdk activate latest
+        source ./emsdk/emsdk_env.sh
+
+    - name: Compile C to WebAssembly
+      run: |
+        source ./emsdk/emsdk_env.sh
+        emcc hello.c -o hello.html
+
+    - name: Upload WebAssembly files
+      uses: actions/upload-artifact@v2
+      with:
+        name: wasm-files
+        path: hello.*
